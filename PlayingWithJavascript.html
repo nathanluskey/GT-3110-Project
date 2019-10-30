@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>"Go/No-Go Test"</title>
+</head>
+<body onload="start()">
+    <p id="txt">Hello!</p>
+
+    <script type="text/javascript">
+        var counter = 0;
+        var stopCounting = false;
+        function start() {
+            window.addEventListener('keypress', function(e) {
+                if (e.keyCode == 32) {
+                    stopCounting = true;
+                }
+            });
+
+            while (!stopCounting) {
+                setTimeout(startCounting, 1000);
+            }
+
+        }
+
+        function startCounting() {
+                document.getElementById("txt").innerHTML = counter;
+                counter = counter + 1;
+        }
+        function wait(ms)
+        {
+            var d = new Date();
+            var d2 = null;
+            do { d2 = new Date(); }
+            while(d2-d < ms);
+        }
+
+    </script>
+</body>
+</html>
