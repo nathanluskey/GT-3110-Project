@@ -9,32 +9,26 @@
 
     <script type="text/javascript">
         var counter = 0;
-        var stopCounting = false;
+        var stoppedCounting = false;
+        var myVar = setInterval(startCounting, 1000);
         function start() {
             window.addEventListener('keypress', function(e) {
                 if (e.keyCode == 32) {
-                    stopCounting = true;
+                    if(!stoppedCounting) {
+                        clearInterval(myVar);
+                        stoppedCounting = true;
+                    } else {
+                        myVar = setInterval(startCounting, 1000);
+                        stoppedCounting = false;
+                    }
                 }
             });
-
-            while (!stopCounting) {
-                setTimeout(startCounting, 1000);
-            }
-
         }
 
         function startCounting() {
                 document.getElementById("txt").innerHTML = counter;
                 counter = counter + 1;
         }
-        function wait(ms)
-        {
-            var d = new Date();
-            var d2 = null;
-            do { d2 = new Date(); }
-            while(d2-d < ms);
-        }
-
     </script>
 </body>
 </html>
