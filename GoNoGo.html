@@ -47,36 +47,42 @@
 
         window.addEventListener('keypress', function(e) {
             if (e.keyCode == 32) {
-                pressedSpace = true;
+                clearInterval(timingHandle);
             }
         });
     }
-    // create something similar to this
-    //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_win_settimeout_cleartimeout2
 
+    //The while version that doesn't work...
     function runTest() {
-        while (counter < totalItterations) {
-            clearCanvas();
-            startTime = Date.now();
-            endTime = Date.now();
-            while ((startTime - endTime) < 100) {
-
-            }
-            state = writeRandom();
-            startTime = Date.now();
-            while ((startTime - endTime) <= delayBetween && !pressedSpace) {
-                endTime = Date.now();
-            }
-
-            if (pressedSpace) {
-                pressedSpace = false;
-            }
-            allCounters[counter] = counter;
-            stateDisplayed[counter] = state;
-            timeToClick[counter] = endTime - startTime;
-            counter = counter + 1;
-        }
-        displayStats();
+        //Simplest example is below that sort of works...
+        clearCanvas()
+        timingHandle = setInterval(writeRandom, 1000);
+        // startTime = Date.now();
+        // endTime = Date.now();
+        // while ((startTime - endTime) < 100) {
+        //     endTime = Date.now();
+        // }
+        // while (counter < totalItterations) {
+        //     clearCanvas();
+        //     startTime = Date.now();
+        //     endTime = Date.now();
+        //     while ((startTime - endTime) < 100) {
+        //         endTime = Date.now();
+        //     }
+        //     state = writeRandom();
+        //     startTime = Date.now();
+        //     while ((startTime - endTime) <= delayBetween && !pressedSpace) {
+        //         endTime = Date.now();
+        //     }
+        //     if (pressedSpace) {
+        //         pressedSpace = false;
+        //     }
+        //     allCounters[counter] = counter;
+        //     stateDisplayed[counter] = state;
+        //     timeToClick[counter] = endTime - startTime;
+        //     counter = counter + 1;
+        // }
+        // displayStats();
     }
     //Tried doing it with timeouts, but it's reallly hard...
     // function runTest() {
