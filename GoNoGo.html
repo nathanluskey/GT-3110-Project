@@ -28,9 +28,8 @@
     ctx.font = height *0.05 + "px arial";
 
     //global variables
-    var spaceBarHit = false;
     var counter = 0;
-    var totalItterations = 3; //How many times to flash it
+    var totalItterations = 5; //How many times to flash it
     var delayBetween = 2000; //how many mSec to wait between flashing
 
     var timeToClick = [];
@@ -40,9 +39,9 @@
 
     function start() {
         ctx.textAlign="left";
-        ctx.fillText("Press the Space Bar to Start",10,50);
-        ctx.fillText("Press Space for Go", 10, 50 + height*0.05 + 2);
-        ctx.fillText("Don't Press Space for No-Go", 10, 50 + 2*(height*0.05) + 2);
+        ctx.fillText("Press the start button to start",10,50);
+        ctx.fillText("Press space on go", 10, 50 + height*0.05 + 2);
+        ctx.fillText("Don't press space for no-go", 10, 50 + 2*(height*0.05) + 2);
     }
 
     window.addEventListener('keypress', function(e) {
@@ -50,8 +49,10 @@
             if (counter < totalItterations) {
                 clearInterval(timingHandle);
                 timeToClick[counter - 1] = Date.now() - startTime;
+                clearCanvas();
                 runTest();
             } else if (counter == totalItterations){
+                timeToClick[counter - 1] = Date.now() - startTime;
                 clearInterval(timingHandle);
                 displayStats();
             }
@@ -64,14 +65,7 @@
     }
 
     function runTest() {
-        if (counter == 0) {
             timingHandle = setInterval(writeRandom, delayBetween);
-        } else if (counter < totalItterations) {
-            timingHandle = setInterval(writeRandom, delayBetween);
-        } else if(counter == totalItterations) {
-            clearInterval(timingHandle);
-            displayStats();
-        }
     }
 
     function writeRandom() {
@@ -83,11 +77,17 @@
             writeNoGo();
             stateDisplayed[counter] =  "NoGo";
         }
+
         ctx.fillText(counter,canvas.width / 2,canvas.height / 4);
         allCounters[counter] = counter;
         //Default timer
         timeToClick[counter] = delayBetween;
         counter = counter + 1;
+        
+        if (counter > totalItterations) {
+            clearInterval(timingHandle);
+            displayStats();
+        }
     }
 
     function displayStats() {
