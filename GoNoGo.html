@@ -29,7 +29,7 @@
 
     //global variables
     var counter = 0;
-    var totalItterations = 5; //How many times to flash it
+    var totalItterations = 20; //How many times to flash it
     var delayBetween = 2000; //how many mSec to wait between flashing
 
     var timeToClick = [];
@@ -78,12 +78,12 @@
             stateDisplayed[counter] =  "NoGo";
         }
 
-        ctx.fillText(counter,canvas.width / 2,canvas.height / 4);
+        ctx.fillText(counter + 1,canvas.width / 2,canvas.height / 4);
         allCounters[counter] = counter;
         //Default timer
         timeToClick[counter] = delayBetween;
         counter = counter + 1;
-        
+
         if (counter > totalItterations) {
             clearInterval(timingHandle);
             displayStats();
@@ -103,7 +103,7 @@
             var cell3 = row.insertCell(2);
             cell1.innerHTML = timeToClick[i];
             cell2.innerHTML = stateDisplayed[i];
-            cell3.innerHTML = allCounters[i];
+            cell3.innerHTML = allCounters[i] + 1;
         }
         counter = counter + 1;
     }
@@ -128,7 +128,7 @@
         for (var i = 0; i < totalItterations; i++) {
             text = text + timeToClick[i].toString() + ",";
             text = text + stateDisplayed[i].toString() + ",";
-            text = text + allCounters[i].toString() + "\n";
+            text = text + (allCounters[i] + 1).toString() + "\n";
         }
         var filename = document.getElementById("filename").value + ".csv";
         download(filename, text);
