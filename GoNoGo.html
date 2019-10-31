@@ -36,7 +36,6 @@
     var timeToClick = [];
     var stateDisplayed = [];
     var allCounters = [];
-    var pressedSpace = false;
     var startTime, endTime, state, timingHandle;
 
     function start() {
@@ -44,58 +43,48 @@
         ctx.fillText("Press the Space Bar to Start",10,50);
         ctx.fillText("Press Space for Go", 10, 50 + height*0.05 + 2);
         ctx.fillText("Don't Press Space for No-Go", 10, 50 + 2*(height*0.05) + 2);
-
-        window.addEventListener('keypress', function(e) {
-            if (e.keyCode == 32) {
-                clearInterval(timingHandle);
-            }
-        });
     }
 
-    //The while version that doesn't work...
+    // window.addEventListener('keypress', function(e) {
+    //     if (spaceBarHit) {
+    //         runTest();
+    //         spaceBarHit = false;
+    //     } else {
+    //         clearInterval(timingHandle);
+    //         spaceBarHit = true;
+    //     }
+    // });
+    window.addEventListener('keypress', function(e) {
+        if (counter < totalItterations) {
+            clearInterval(timingHandle);
+            counter = counter + 1;
+        } else {
+            displayStats();
+        }
+
+    });
+
     function runTest() {
-        //Simplest example is below that sort of works...
-        clearCanvas()
-        timingHandle = setInterval(writeRandom, 1000);
-        // startTime = Date.now();
-        // endTime = Date.now();
-        // while ((startTime - endTime) < 100) {
-        //     endTime = Date.now();
-        // }
-        // while (counter < totalItterations) {
-        //     clearCanvas();
-        //     startTime = Date.now();
-        //     endTime = Date.now();
-        //     while ((startTime - endTime) < 100) {
-        //         endTime = Date.now();
-        //     }
-        //     state = writeRandom();
-        //     startTime = Date.now();
-        //     while ((startTime - endTime) <= delayBetween && !pressedSpace) {
-        //         endTime = Date.now();
-        //     }
-        //     if (pressedSpace) {
-        //         pressedSpace = false;
-        //     }
-        //     allCounters[counter] = counter;
-        //     stateDisplayed[counter] = state;
-        //     timeToClick[counter] = endTime - startTime;
-        //     counter = counter + 1;
-        // }
-        // displayStats();
+        if (counter == 0) {
+            timingHandle = setInterval(writeRandom, delayBetween);
+        } else if (counter < totalItterations) {
+            counter = counter + 1;
+        } else {
+            displayStats();
+        }
     }
-    //Tried doing it with timeouts, but it's reallly hard...
+
+
     // function runTest() {
-    //
     //     if (counter == 0) {
     //         //start case
-    //         timingHandle = setTimeout(writeRandom, delayBetween);
+    //         timingHandle = setInterval(writeRandom, delayBetween);
     //         startTime = Date.now();
     //         runTest();
     //         // ctx.fillText("start", 50, 50);
     //     } else if (counter < totalItterations) {
     //         //middle case
-    //         clearTimeout(timingHandle);
+    //         clearInterval(timingHandle);
     //         timeToClick[counter] = Date.now() - startTime;
     //         timingHandle = setTimeout(writeRandom, delayBetween);
     //         startTime = Date.now();
@@ -112,6 +101,39 @@
     //     counter = counter + 1;
     // }
 
+    //The while version that doesn't work...
+    // function runTest() {
+    //     clearCanvas();
+    //     startTime = Date.now();
+    //     endTime = Date.now();
+    //     while ((startTime - endTime) < 100) {
+    //         endTime = Date.now();
+    //     }
+    //     while (counter < totalItterations) {
+    //         clearCanvas();
+    //         startTime = Date.now();
+    //         endTime = Date.now();
+    //         while ((startTime - endTime) < 100) {
+    //             endTime = Date.now();
+    //         }
+    //         state = writeRandom();
+    //         startTime = Date.now();
+    //         while ((startTime - endTime) <= delayBetween && !pressedSpace) {
+    //             endTime = Date.now();
+    //         }
+    //         if (pressedSpace) {
+    //             pressedSpace = false;
+    //         }
+    //         allCounters[counter] = counter;
+    //         stateDisplayed[counter] = state;
+    //         timeToClick[counter] = endTime - startTime;
+    //         counter = counter + 1;
+    //     }
+    //     displayStats();
+    // }
+    //Tried doing it with timeouts, but it's reallly hard...
+
+
     function writeRandom() {
         if (Math.random() < 0.5) {
             writeGo();
@@ -120,6 +142,7 @@
             writeNoGo();
             stateDisplayed[counter] =  "NoGo";
         }
+        ctx.fillText(counter,canvas.width / 2,canvas.height / 4);
     }
 
     function displayStats() {
