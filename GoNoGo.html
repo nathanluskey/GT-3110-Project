@@ -8,7 +8,7 @@
 
     <canvas id="canvas" width= "50px" height="50px" style="border:1px solid #000000;">
     </canvas><br/>
-    <input type="button" id="StartTest" value="startTest" onclick="runTest()"/>
+    <input type="button" id="StartTest" value="startTest" onclick="startTest()"/>
     <br/>
     <table id="finalResults"></table><br/>
     <textarea id="filename" rows="1">fileName</textarea><br/>
@@ -36,7 +36,7 @@
     var timeToClick = [];
     var stateDisplayed = [];
     var allCounters = [];
-    var startTime, endTime, state, timingHandle;
+    var startTime, timingHandle;
 
     function start() {
         ctx.textAlign="left";
@@ -46,33 +46,36 @@
     }
 
     window.addEventListener('keypress', function(e) {
-        if (counter < totalItterations) {
-            clearInterval(timingHandle);
-            counter = counter + 1;
-            runTest();
-        } else {
-            displayStats();
+        if (testStarted) {
+            if (counter < totalItterations) {
+                clearInterval(timingHandle);
+                timeToClick[counter - 1] = Date.now() - startTime;
+                runTest();
+            } else if (counter == totalItterations){
+                clearInterval(timingHandle);
+                displayStats();
+            }
         }
     });
 
-    // //Write Random Works!
-    // window.addEventListener('keypress', function(e) {
-    //     writeRandom();
-    //     counter = counter + 1;
-    // });
+    function startTest() {
+        testStarted = true;
+        runTest();
+    }
 
     function runTest() {
         if (counter == 0) {
             timingHandle = setInterval(writeRandom, delayBetween);
         } else if (counter < totalItterations) {
             timingHandle = setInterval(writeRandom, delayBetween);
-            counter = counter + 1;
-        } else {
+        } else if(counter == totalItterations) {
+            clearInterval(timingHandle);
             displayStats();
         }
     }
 
     function writeRandom() {
+        startTime = Date.now();
         if (Math.random() < 0.5) {
             writeGo();
             stateDisplayed[counter] = "Go";
@@ -81,6 +84,10 @@
             stateDisplayed[counter] =  "NoGo";
         }
         ctx.fillText(counter,canvas.width / 2,canvas.height / 4);
+        allCounters[counter] = counter;
+        //Default timer
+        timeToClick[counter] = delayBetween;
+        counter = counter + 1;
     }
 
     function displayStats() {
@@ -94,7 +101,7 @@
             var cell1 = row.insertCell(0);
             var cell2 = row.insertCell(1);
             var cell3 = row.insertCell(2);
-            cell1.innerHTML = timeToClick[i+1];
+            cell1.innerHTML = timeToClick[i];
             cell2.innerHTML = stateDisplayed[i];
             cell3.innerHTML = allCounters[i];
         }
@@ -119,7 +126,7 @@
         // Generate download of hello.txt file with some content
         var text = "";
         for (var i = 0; i < totalItterations; i++) {
-            text = text + timeToClick[i+1].toString() + ",";
+            text = text + timeToClick[i].toString() + ",";
             text = text + stateDisplayed[i].toString() + ",";
             text = text + allCounters[i].toString() + "\n";
         }
