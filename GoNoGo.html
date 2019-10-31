@@ -7,10 +7,13 @@
 <body onload="start()">
 
     <canvas id="canvas" width= "50px" height="50px" style="border:1px solid #000000;">
-    </canvas>
+    </canvas><br/>
+    <input type="button" id="StartTest" value="startTest" onclick="runTest()"/>
+    <br/>
     <table id="finalResults"></table><br/>
     <textarea id="filename" rows="1">fileName</textarea><br/>
     <input type="button" id="downloadButton" value="Download Data"/>
+
     <script type="text/javascript">
     // https://www.w3schools.com/js/js_arrays.asp to add in array elements
     // https://www.w3schools.com/graphics/canvas_clock.asp for all canvas stuff
@@ -27,42 +30,90 @@
     //global variables
     var spaceBarHit = false;
     var counter = 0;
-    var totalItterations = 5; //How many times to flash it
+    var totalItterations = 3; //How many times to flash it
     var delayBetween = 2000; //how many mSec to wait between flashing
+
     var timeToClick = [];
     var stateDisplayed = [];
     var allCounters = [];
-    var currentState = "start";
-    var testHasStarted = false;
+    var pressedSpace = false;
+    var startTime, endTime, state, timingHandle;
+
     function start() {
         ctx.textAlign="left";
         ctx.fillText("Press the Space Bar to Start",10,50);
         ctx.fillText("Press Space for Go", 10, 50 + height*0.05 + 2);
         ctx.fillText("Don't Press Space for No-Go", 10, 50 + 2*(height*0.05) + 2);
-        var startTime, endTime, state;
+
         window.addEventListener('keypress', function(e) {
-            // can't use the setInterval() function because it's allowed to drift
-            // https://stackoverflow.com/questions/29971898/how-to-create-an-accurate-timer-in-javascript
-            if (e.keyCode == 32 && !testHasStarted) {
-                state = writeRandom();
-                startTime = Date.now();
-                testHasStarted = true;
-            } else if(e.keyCode == 32) {
-                if (counter < totalItterations) {
-                    endTime = Date.now();
-                    //save variables
-                    timeToClick[counter] = endTime - startTime;
-                    stateDisplayed[counter] = state;
-                    allCounters[counter] = counter;
-                    //reset for next iteration
-                    startTime = endTime;
-                    state = writeRandom();
-                    counter = counter + 1;
-                } else if( counter == totalItterations) {
-                    displayStats();
-                }
+            if (e.keyCode == 32) {
+                pressedSpace = true;
             }
         });
+    }
+    // create something similar to this
+    //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_win_settimeout_cleartimeout2
+
+    function runTest() {
+        while (counter < totalItterations) {
+            clearCanvas();
+            startTime = Date.now();
+            endTime = Date.now();
+            while ((startTime - endTime) < 100) {
+
+            }
+            state = writeRandom();
+            startTime = Date.now();
+            while ((startTime - endTime) <= delayBetween && !pressedSpace) {
+                endTime = Date.now();
+            }
+
+            if (pressedSpace) {
+                pressedSpace = false;
+            }
+            allCounters[counter] = counter;
+            stateDisplayed[counter] = state;
+            timeToClick[counter] = endTime - startTime;
+            counter = counter + 1;
+        }
+        displayStats();
+    }
+    //Tried doing it with timeouts, but it's reallly hard...
+    // function runTest() {
+    //
+    //     if (counter == 0) {
+    //         //start case
+    //         timingHandle = setTimeout(writeRandom, delayBetween);
+    //         startTime = Date.now();
+    //         runTest();
+    //         // ctx.fillText("start", 50, 50);
+    //     } else if (counter < totalItterations) {
+    //         //middle case
+    //         clearTimeout(timingHandle);
+    //         timeToClick[counter] = Date.now() - startTime;
+    //         timingHandle = setTimeout(writeRandom, delayBetween);
+    //         startTime = Date.now();
+    //         runTest();
+    //         // ctx.fillText("middle", 50, 50);
+    //     } else if (counter == totalItterations) {
+    //         //end case
+    //         clearTimeout(timingHandle);
+    //         timeToClick[counter] = Date.now() - startTime;
+    //         displayStats();
+    //         // ctx.fillText("stopped", 15, 50);
+    //     }
+    //     allCounters[counter] = counter;
+    //     counter = counter + 1;
+    // }
+
+    function writeRandom() {
+        if (Math.random() < 0.5) {
+            writeGo();
+            stateDisplayed[counter] = "Go";
+        } else {
+            writeNoGo();
+            stateDisplayed[counter] =  "NoGo";
+        }
     }
 
     function displayStats() {
@@ -76,10 +127,11 @@
             var cell1 = row.insertCell(0);
             var cell2 = row.insertCell(1);
             var cell3 = row.insertCell(2);
-            cell1.innerHTML = timeToClick[i];
+            cell1.innerHTML = timeToClick[i+1];
             cell2.innerHTML = stateDisplayed[i];
             cell3.innerHTML = allCounters[i];
         }
+        counter = counter + 1;
     }
 
     function download(filename, text) {
@@ -100,7 +152,7 @@
         // Generate download of hello.txt file with some content
         var text = "";
         for (var i = 0; i < totalItterations; i++) {
-            text = text + timeToClick[i].toString() + ",";
+            text = text + timeToClick[i+1].toString() + ",";
             text = text + stateDisplayed[i].toString() + ",";
             text = text + allCounters[i].toString() + "\n";
         }
@@ -108,16 +160,6 @@
         download(filename, text);
     }, false);
 
-    function writeRandom() {
-        clearCanvas();
-        if (Math.random() < 0.5) {
-            setTimeout(writeGo(),1000);
-            return "Go";
-        } else {
-            setTimeout(writeNoGo(),1000);
-            return "NoGo";
-        }
-    }
     //clears canvas to write new words on
     function clearCanvas() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
