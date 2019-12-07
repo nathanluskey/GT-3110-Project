@@ -8,15 +8,19 @@
 
 <body>
     <input type="button" id="button" value="play noise" onclick="noisePlaying()"/><br/>
-    <input type="number" id="interval" value="1000">
-
+    <input type="number" id="interval" value="1000"> <br/>
+    <p>Real Timing: </p>
+    <p id="realTiming"></p>
 
     <script type="text/javascript">
+        //For date: https://www.w3schools.com/jsref/jsref_gettime.asp
         mySound = new sound("Beep.mp3");
         var soundPlaying = false;
-        var soundHandle, timingInterval;
+        var soundHandle, timingInterval, startTime, currentTime, d;
         function noisePlaying() {
             if (!soundPlaying) {
+                d = new Date();
+                startTime = d.getTime();
                 timingInterval = document.getElementById("interval").value;
                 soundHandle = setInterval(playNoise, timingInterval);
                 document.getElementById("button").value = "stop noise";
@@ -30,6 +34,11 @@
         }
         function playNoise() {
             mySound.play();
+            d = new Date();
+            currentTime = d.getTime();
+            document.getElementById("realTiming").innerHTML = currentTime - startTime;
+            d = new Date();
+            startTime = d.getTime();
         }
         //https://www.w3schools.com/graphics/game_sound.asp
         function sound(src) {
