@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <title>"Noise Playing"</title>
 </head>
-
-
 <body>
     <input type="button" id="button" value="play noise" onclick="noisePlaying()"/><br/>
     <input type="number" id="interval" value="1000"> <br/>
@@ -17,15 +15,18 @@
         mySound = new sound("Beep.mp3");
         var soundPlaying = false;
         var soundHandle, timingInterval, startTime, currentTime, d;
+        var timingInput = document.getElementById("interval");
         function noisePlaying() {
             if (!soundPlaying) {
                 d = new Date();
                 startTime = d.getTime();
-                timingInterval = document.getElementById("interval").value;
+                timingInput.style.display = "none";
+                timingInterval = timingInput.value;
                 soundHandle = setInterval(playNoise, timingInterval);
                 document.getElementById("button").value = "stop noise";
                 soundPlaying = true;
             } else {
+                timingInput.style.display = "inline";
                 soundPlaying = false;
                 clearInterval(soundHandle);
                 document.getElementById("button").value = "play noise";
